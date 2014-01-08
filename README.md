@@ -6,7 +6,6 @@ Created primarily as an exercise for testing PySide in Modo 801 Linux
 
 
 *INSTALLATION:*
-
 Download the ZIP, rename it to 'LightBank' and place it inside ~/.luxology/Scripts.
 
 
