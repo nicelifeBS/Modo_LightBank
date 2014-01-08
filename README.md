@@ -8,10 +8,10 @@ Created primarily as an exercise for testing PySide in Modo 801 Linux
 *INSTALLATION:* <br/>
 Download the ZIP, rename it to 'LightBank' and place it inside ~/.luxology/Scripts.
 
+___
 
 
-
-DESCRIPTION:
+*DESCRIPTION:* <br/>
 
 Registers a new Custom Viewport which offers access to limited controls for all lights simultaneously, including the following:
 - radiant intensity
@@ -23,7 +23,7 @@ Registers a new Custom Viewport which offers access to limited controls for all 
 
 
 
-KNOWN ISSUES:
+*KNOWN ISSUES:* <br/>
 
 - The QWidget is not deleted when the viewport is closed
 - Because of the above, the Scene Item Listener is not removed
