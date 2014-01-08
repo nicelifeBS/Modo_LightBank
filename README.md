@@ -3,7 +3,7 @@ LightBank
 
 
 Created primarily as an exercise for testing PySide in Modo 801 Linux
-
+___
 
 *INSTALLATION:* <br/>
 Download the ZIP, rename it to 'LightBank' and place it inside ~/.luxology/Scripts.
@@ -21,7 +21,7 @@ Registers a new Custom Viewport which offers access to limited controls for all 
 - on/off
 - solo
 
-
+___
 
 *KNOWN ISSUES:* <br/>
 
