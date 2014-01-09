@@ -3,7 +3,7 @@ LightBank
 
 
 *DESCRIPTION:* <br/>
-Created primarily as an exercise for testing PySide in Modo 801 Linux. Registers a new Custom Viewport which offers access to limited controls for all lights simultaneously, including the following:
+Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registers a new Custom Viewport which offers access to limited controls for all lights simultaneously, including the following:
 - radiant intensity
 - material color
 - diffuse contribution
