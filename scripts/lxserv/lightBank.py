@@ -19,7 +19,6 @@
 #----------------------------------------------------------------------------------------------------------------------
 # - The QWidget is not deleted when the viewport is closed
 # - Because of the above, the Scene Item Listener is not removed
-# - Solo functionality has faulty logic
 # - The SIL is returning values from the middle of events rather than after their completion
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -41,7 +40,7 @@ import lightList_UI
 import lightPanel_UI
 
 # import the Modo listener classes
-from listeners import *
+import listeners
 
 
 # Get basic services
@@ -58,8 +57,9 @@ ITEM_RENAME   = 2
 VALUE_CHANGED = 3
 
 
-# Light Types
-lightTypesDict = {
+# Light Item Types
+lightItemsDict = {
+				133: 'LightMaterial',
 				138: 'Directional',
 				139: 'Point',
 				140: 'Spot',
@@ -71,7 +71,10 @@ lightTypesDict = {
 				}
 
 
-# Define the contents of the 'About' button, as html
+# light state storage
+lightPreSoloStates = {}
+
+# Define the contents of the 'About' screen, as html
 aboutText = '''
 Version 0.1 - <a href="http://www.timcrowson.com" style="text-decoration:none; color: #DBBC86">Tim Crowson</a> - January 2014 <br/><br/><br/>
 
@@ -90,9 +93,6 @@ LightBank offers access to limited controls for all lights simultaneously, inclu
 <br/><br/>
 <span style="color: #f49c1c;"><em>KNOWN ISSUES</em></span>
 <ul>
-	<li>The QWidget is not deleted when the viewport is closed</li>
-	<li>Because of the above, the Scene Item Listener is not removed</li>
-	<li>Solo functionality has faulty logic</li>
 	<li>The Scene Item Listener is returning values from the middle of events rather than after their completion</li>
 	<li>When a light is created or deleted, the panel will not update propely because of the above issues with the SIL. Use the Refresh button for now.</li>
 </ul>
@@ -112,7 +112,7 @@ def getItemByName (name):
 
 def getLightMaterial (light):
 	'''
-	Gets the light material associated with a light.
+	Get the light material associated with a light primitive
 	'''
 	scene = lxu.select.SceneSelection().current()
 	lightMat_type = lx.service.Scene ().ItemTypeLookup (lx.symbol.sITYPE_LIGHTMATERIAL)
@@ -128,12 +128,13 @@ def getLightMaterial (light):
 
 
 #----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
 class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 	"""
 	The main LightBank list, to which we'll add subwidgets for each light
 	"""
 
-	def __init__(self, parent=None, selected=[], flag=0, *args):
+	def __init__(self, parent=None):
 		QWidget.__init__(self, parent)
 		self.setupUi(self)
 		self.setConnections()
@@ -148,10 +149,8 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		self.update_GIState()
 
 
-	def closeEvent(self, event):
-		lx.out('LightBank : Closing Scene Item Listener...')
-		# This closeEvent() method is what I can't trigger successfully,
-		# presumably because I don't have the widget parented correctly...
+	def __del__(self):
+		lx.out('LightBank Container destructor called...')
 
 
 	def setConnections(self):
@@ -209,7 +208,6 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		cmdServ.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{globEnable} value:%s item:{%s}" % (giState, renderItem.Ident()))
 
 
-
 	def panels_RemoveOld(self):
 		'''
 		Remove panels for lights which no longer exist in the scene
@@ -242,18 +240,11 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 
 				# Define the panel.
 				qItem = QListWidgetItem()
-				panel = LightBank_Panel()
+				panel = LightBank_Panel(lightIdent)
 				panel.compactSizeHint = panel.sizeHint()				
 				qItem.setSizeHint(panel.sizeHint())
 
-			 	# Store the ident
-				panel.ident = lightIdent
-
 				# Set the panel title.
-				# Currently this will reflect the Ident() due to 
-				# a limitation with the SIL methods which get fired
-				# in the middle of an event (and thus prior to the internal 
-				# renaming of the item) rather than after their completion.
 				panel.lightNameLineEdit.setText(light.UniqueName())
 
 				# Add the panel to the list.
@@ -295,14 +286,15 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 			panelIdent = panel.ident
 			for light in lightsInScene:
 				if panelIdent == light.Ident():
-					panel.lightTypeLabel.setText( lightTypesDict[light.Type()] )
+					panel.lightTypeLabel.setText( lightItemsDict[light.Type()] )
 
-		
+
 	def update_PanelValues(self, panel, light):
 		'''
 		Update the values on the light panel according to channel values in the scene.
 		Takes a QObject for the panel, and a Modo Python object for the light
 		'''
+
 		# create a channelRead object
 		scene = lxu.select.SceneSelection ().current ()
 		channelRead = scene.Channels (lx.symbol.s_ACTIONLAYER_EDIT, selServ.GetTime ())
@@ -320,24 +312,26 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 			panel.lightEnabledCheckbox.setChecked(True)
 
 		# Get the Color of the light's material
-		lightMaterial = getLightMaterial(light)
+		lightMat = getLightMaterial(light)
 		
-		if lightMaterial:
-			colorRed = channelRead.Double (lightMaterial, lightMaterial.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.R'))
-			colorGreen = channelRead.Double (lightMaterial, lightMaterial.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.G'))
-			colorBlue = channelRead.Double (lightMaterial, lightMaterial.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.B'))
+		if lightMat:
+			colorRed = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.R'))
+			colorGreen = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.G'))
+			colorBlue = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.B'))
 			color = QColor().fromRgbF( colorRed, colorGreen, colorBlue)
 			panel.colorPickButton.setStyleSheet('QPushButton{background-color: rgb(%s, %s, %s);}'%(color.red(), color.green(), color.blue()))
 
 			# Get the Diffuse contribution of the light's material
-			affectDiff = channelRead.Double (lightMaterial, lightMaterial.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_DIFFUSE))
+			affectDiff = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_DIFFUSE))
 			panel.diffuseSlider.setValue(affectDiff*100)
 			panel.diffuseSpinBox.setValue(affectDiff*100)
 
 			# Get the Specular contribution of the light's material
-			affectSpec = channelRead.Double (lightMaterial, lightMaterial.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_SPECULAR))
+			affectSpec = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_SPECULAR))
 			panel.specularSlider.setValue(affectSpec*100)
 			panel.specularSpinBox.setValue(affectSpec*100)
+
+
 
 	
 	def update_PanelValuesAll(self):
@@ -388,6 +382,7 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		self.update_PanelValuesAll()
 		self.update_PanelTitles()
 
+
 	def showAbout(self):
 		'''
 		Display info about LightBank in a modal window
@@ -407,12 +402,13 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 	and apply it via QListWidgetItem.setWidget()
 	'''
 
-	def __init__(self,parent=None,selected=[],flag=0, *args):
+	def __init__(self, ident, parent=None):
 		QWidget.__init__(self, parent)
 		self.setupUi(self)
 	
 		self.row = None
-		self.ident = None
+		self.ident = ident
+		self.identContainer.setText(ident)
 		self.compactSizeHint = None
 
 		self.optionsWidget.hide()
@@ -428,7 +424,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		self.lightNameLineEdit.editingFinished.connect(self.set_LightName)
 
 		self.intensitySlider.sliderReleased.connect(self.update_intensitySpinBox)
-		self.intensitySpinBox.valueChanged.connect(self.set_LightIntensity)
+		self.intensitySpinBox.editingFinished.connect(self.update_intensitySlider)
 
 		self.lightEnabledCheckbox.stateChanged.connect(self.toggle_LightEnabled)
 		self.lightSoloButton.clicked.connect(self.toggle_LightSolo)
@@ -436,10 +432,11 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		self.optionsCheckbox.stateChanged.connect(self.toggle_OptionsWidget)
 
 		self.diffuseSlider.sliderReleased.connect(self.update_diffuseSpinBox)
-		self.diffuseSpinBox.valueChanged.connect(self.set_LightDiffuseContribution)
+		self.diffuseSpinBox.editingFinished.connect(self.update_diffuseSlider)
 
 		self.specularSlider.sliderReleased.connect(self.update_specularSpinBox)
-		self.specularSpinBox.valueChanged.connect(self.set_LightSpecContribution)
+		self.specularSpinBox.editingFinished.connect(self.update_specularSlider)
+
 
 
 
@@ -448,6 +445,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the intensity spin box according to the intensityslider
 		'''
 		self.intensitySpinBox.setValue(float(self.intensitySlider.value())/10)
+		self.set_LightIntensity()
 
 
 	def update_intensitySlider(self):
@@ -455,6 +453,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the intensity slider according to the intensity spin box
 		'''
 		self.intensitySlider.setValue(self.intensitySpinBox.value()*10)
+		self.set_LightIntensity()
 
 
 	def update_diffuseSlider(self):
@@ -462,6 +461,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the diffuse slider according to the diffuse spin box
 		'''
 		self.diffuseSlider.setValue(self.diffuseSpinBox.value())
+		self.set_LightDiffuseContribution()
 
 
 	def update_diffuseSpinBox(self):
@@ -469,6 +469,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the diffuse spin box according to the diffuse slider
 		'''
 		self.diffuseSpinBox.setValue(self.diffuseSlider.value())
+		self.set_LightDiffuseContribution()
 
 
 	def update_specularSlider(self):
@@ -476,6 +477,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the diffuse slider according to the diffuse spin box
 		'''
 		self.specularSlider.setValue(self.specularSpinBox.value())
+		self.set_LightSpecContribution()
 
 
 	def update_specularSpinBox(self):
@@ -483,6 +485,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Update the diffuse spin box according to the diffuse slider
 		'''
 		self.specularSpinBox.setValue(self.specularSlider.value())
+		self.set_LightSpecContribution()
 
 
 	def toggle_LightEnabled(self):
@@ -502,20 +505,68 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		Toggle the solo state of the target light item
 		'''
+
 		scene = lxu.select.SceneSelection ().current ()
 		light_type = sceneServ.ItemTypeLookup (lx.symbol.sITYPE_LIGHT)
+		channelRead = scene.Channels(lx.symbol.s_ACTIONLAYER_EDIT, selServ.GetTime())
+		parent = self.parentWidget().parentWidget().parentWidget()
+		thisPanelIdent = self.ident
 
-		for i in range(scene.ItemCount(light_type)):
-			item = scene.ItemByIndex(light_type, i)
 
-			if not self.lightSoloButton.isChecked():
-				cmdServ.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:default item:{%s}" % item.Ident())
+		# solo this light
+		if self.lightSoloButton.isChecked():
 
-			elif self.lightSoloButton.isChecked():
-				lightName = item.UniqueName()
-				if lightName != self.lightNameLineEdit.text():
-					cmdServ.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:off item:{%s}" % item.Ident())
-	
+			# store original render states
+			for i in range(scene.ItemCount(light_type)):
+				item = scene.ItemByIndex(light_type, i)
+				lightIdent = item.Ident()
+				lightPreSoloStates[lightIdent] = channelRead.Value(item, 'render') 
+
+			# set new render states
+			for i in range(scene.ItemCount(light_type)):
+				item = scene.ItemByIndex(light_type, i)
+				lightIdent = item.Ident()
+
+				# disable all other lights
+				if lightIdent != thisPanelIdent:
+					cmdServ.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:off item:{%s}" % lightIdent)
+
+				# enable this light
+				cmdServ.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:off item:{%s}" % thisPanelIdent)
+
+			# update UI
+			self.lightEnabledCheckbox.setChecked(True)
+
+			for i in range (parent.lightList.count()):
+				panelItem = parent.lightList.item(i)
+				panelWidget = parent.lightList.itemWidget(panelItem)
+				if panelWidget.identContainer.text() != thisPanelIdent:
+					panelWidget.lightSoloButton.setChecked(False)
+					panelWidget.setEnabled(False)
+
+
+		# restore pre-solo state
+		else:
+			for i in range(scene.ItemCount(light_type)):
+				item = scene.ItemByIndex(light_type, i)
+				lightIdent = item.Ident()
+
+				# retrieve the original render state from our dictionary
+				originalState = lightPreSoloStates[lightIdent]
+
+				# set the value
+				cmdServ.ExecuteArgString( -1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:%s item:{%s}" %(originalState, lightIdent) )
+
+			# re-enable other widgets
+			for i in range (parent.lightList.count()):
+				panelItem = parent.lightList.item(i)
+				panelWidget = parent.lightList.itemWidget(panelItem)
+				panelWidget.setEnabled(True)
+
+			
+			
+
+
 
 	def toggle_OptionsWidget(self):
 		'''
@@ -556,8 +607,8 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Set the material color for the corresponding light using Modo's color picker
 		'''
 		lightItem = getItemByName(self.ident)
-		lightMaterial = getLightMaterial(lightItem)
-		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "select.color rgb:{item.channel {lightMaterial$lightCol} ? item:{%s}}" % (lightMaterial.Ident()))
+		lightMat = getLightMaterial(lightItem)
+		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "select.color rgb:{item.channel {lightMaterial$lightCol} ? item:{%s}}" % (lightMat.Ident()))
 		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "layout.createOrClose ColorPicker ColorPicker true @macros.layouts@ColorPicker@ width:610 height:550 persistent:true style:popover opaque:true" )
 
 
@@ -567,8 +618,8 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		diffuse = float(self.diffuseSpinBox.value())
 		lightItem = getItemByName(self.ident)
-		lightMaterial = getLightMaterial(lightItem)
-		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{diffuse} value:%f item:{%s}" % (diffuse/100, lightMaterial.Ident()))
+		lightMat = getLightMaterial(lightItem)
+		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{diffuse} value:%f item:{%s}" % (diffuse/100, lightMat.Ident()))
 
 
 	def set_LightSpecContribution(self):
@@ -577,8 +628,8 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		spec = float(self.specularSpinBox.value())
 		lightItem = getItemByName(self.ident)
-		lightMaterial = getLightMaterial(lightItem)
-		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{specular} value:%f item:{%s}" % (spec/100, lightMaterial.Ident()))
+		lightMat = getLightMaterial(lightItem)
+		cmdServ.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{specular} value:%f item:{%s}" % (spec/100, lightMat.Ident()))
 
 
 
@@ -589,6 +640,7 @@ class lightBank(lxifc.CustomView):
 	Defines the Custom Viewport registered by this plugin
 	'''
 	def __init__ (self):
+
 		self.form = None
 		self.item_events = None
 
@@ -609,37 +661,26 @@ class lightBank(lxifc.CustomView):
 		item = lx.object.Item(self.item_events.item)
 		itemType = item.Type()
 
-		if listener.event == ITEM_ADD:
-			if itemType in lightTypesDict:
-				self.form.panels_AddNew()
+		if itemType in lightItemsDict:
 
-		elif listener.event == ITEM_DELETE:
-			if itemType in lightTypesDict:
-				self.form.panels_RemoveOld()
+			if listener:
+				if listener.event == ITEM_ADD:
+					self.form.panels_AddNew()
+					
+				elif listener.event == ITEM_DELETE:
+					self.form.panels_RemoveOld()
 
-		elif listener.event == ITEM_RENAME:
-			pass
+				elif listener.event == ITEM_RENAME:
+					self.form.manualRefresh()
 
-		elif listener.event == VALUE_CHANGED:
-			self.form.update_PanelValuesAll()
-			# if itemType in lightTypesDict or itemType == 133:
-			# 	if itemType == 133:  #light material
-			# 		light = item.Parent()
-			# 		lightIdent = light.Ident()
-			# 	else:
-			# 		light = item
-			# 		lightIdent = item.Ident()
+				elif listener.event == VALUE_CHANGED:
+					self.form.update_PanelValuesAll()
 
-			# 	lightsInScene, existingPanels = self.form.getExistingLightEntities()
-			# 	for panel in existingPanels:
-			# 		if panel.ident == lightIdent:
-			# 			self.form.update_PanelValues(panel, light)
 
 
 	def customview_Init(self, pane):
 		'''
 		'''
-
 		# Get the pane
 		if pane == None:
 			return False
@@ -663,11 +704,17 @@ class lightBank(lxifc.CustomView):
 
 			# Start Item Event listener
 			lx.out('LightBank starting - adding Scene Item Listener...')
-			self.item_events = ItemEvents (self.itemEvent_Handler)
+			self.item_events = listeners.ItemEvents (self.itemEvent_Handler)
 			return True
 
 		return False
 
+
+	def customview_Cleanup (self, pane):
+		'''
+		'''
+		lx.out('LightBank closing - removing Scene Item Listener...')
+		self.item_events.listenerService.RemoveListener(self.item_events)
 
 
 # BLESS THIS MESS!

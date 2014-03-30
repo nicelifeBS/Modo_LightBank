@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightList.ui'
 #
-# Created: Tue Jan  7 20:39:47 2014
+# Created: Sat Mar 29 21:52:27 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -156,8 +156,9 @@ class Ui_Form(object):
 "  border-color: #282828;\n"
 "}")
         self.lightList.setAutoScroll(False)
-        self.lightList.setDragEnabled(True)
-        self.lightList.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        self.lightList.setDragEnabled(False)
+        self.lightList.setDragDropMode(QtGui.QAbstractItemView.NoDragDrop)
+        self.lightList.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.lightList.setObjectName("lightList")
         self.gridLayout.addWidget(self.lightList, 3, 0, 1, 1)
 
