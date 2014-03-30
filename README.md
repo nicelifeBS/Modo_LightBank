@@ -10,7 +10,7 @@ Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registe
 - Diffuse Contribution
 - Specular Contribution
 - Light Renaming (lights can be renamed in either the scene or LightBank)
-- a Solo mode which enables the current light and disables all others. Other light panels are locked out until the light is unsoloed.
+- a Solo mode which enables the current light and disables all others. (Note: other light panels are locked out until the light is unsoloed.
 
 ___
 
