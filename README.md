@@ -9,9 +9,8 @@ Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registe
 - material color
 - diffuse contribution
 - specular contribution
-- light renaming
-
-Also offers a Solo mode which enables the current light and disables all others. Other light panels are locked out until the light is unsoloed.
+- light renaming (lights can be renamed in either the scene or LightBank)
+- a Solo mode which enables the current light and disables all others. Other light panels are locked out until the light is unsoloed.
 
 ___
 
