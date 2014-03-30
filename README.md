@@ -3,13 +3,15 @@ LightBank
 
 
 *DESCRIPTION:* <br/>
-Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registers a new Custom Viewport which offers access to limited controls for all lights simultaneously, including the following:
+Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registers a new Custom Viewport which offers access to limited controls for all lights simultaneously. Offers the following:
+- enable/disable
 - radiant intensity
 - material color
 - diffuse contribution
 - specular contribution
-- on/off
-- solo
+- light renaming
+
+Also offers a Solo mode which enables the current light and disables all others. Other light panels are locked out until the light is unsoloed.
 
 ___
 
@@ -20,7 +22,6 @@ Download the ZIP, rename it to 'LightBank' and place it inside ~/.luxology/Scrip
 ___
 
 *KNOWN ISSUES:* <br/>
-- The QWidget is not deleted when the viewport is closed
-- Because of the above, the Scene Item Listener is not removed
-- Solo functionality has faulty logic
-- The SIL is returning values from the middle of events rather than after their completion
+- Having difficulty properly closing the parent QWidget.
+- Because of the above, the Scene Item Listener is not removed.
+- When a light is created or duplicated, the light's unique name is returned as its internal ident instead. Press the Refresh button to get the latest names.
