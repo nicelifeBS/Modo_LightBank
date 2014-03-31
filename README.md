@@ -15,7 +15,7 @@ Created primarily as an exercise for testing PySide in *Modo 801 Linux*. Registe
 ___
 
 *INSTALLATION:* <br/>
-Download the ZIP, rename it to 'LightBank' and place it inside ~/.luxology/Scripts.
+[Download LightBank](http://www.timcrowson.com/downloads/lightbank/LightBank.zip), and place it inside ~/.luxology/Scripts.
 
 
 ___
