@@ -21,6 +21,5 @@ ___
 ___
 
 *KNOWN ISSUES:* <br/>
-- Having difficulty properly closing the parent QWidget.
-- Because of the above, the Scene Item Listener is not removed.
-- When a light is created or duplicated, the light's unique name is returned as its internal ident instead. Press the Refresh button to get the latest names.
+- When a light is created or deleted, the light's name is incorrectly displayed as the item's internal ident instead. Use the Refresh button to clean this up until a fix is ready. 
+- The Scene Item Listener is not properly removed when LightBank is closed.
