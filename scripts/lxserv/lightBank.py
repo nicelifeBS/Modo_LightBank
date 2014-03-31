@@ -1,25 +1,26 @@
 #----------------------------------------------------------------------------------------------------------------------
 # INFO
 #----------------------------------------------------------------------------------------------------------------------
-# LIGHTBANK, Tim Crowson, January 2014
+# LIGHTBANK, Tim Crowson, March 2014
 
 # Created primarily as an exercise for testing PySide in Modo 801 Linux
 
 # Registers a new Custom Viewport which offers access to limited controls
 # for all lights simultaneously, including the following:
 # - radiant intensity
-# - material color
+# - light color
 # - diffuse contribution
 # - specular contribution
 # - on/off
-# - solo
+# - a Solo mode which enables the current light and disables all others.
+#   (Note: other light panels are locked out until the light is unsoloed.)
 
 #----------------------------------------------------------------------------------------------------------------------
 # ISSUES
 #----------------------------------------------------------------------------------------------------------------------
-# - The QWidget is not deleted when the viewport is closed
-# - Because of the above, the Scene Item Listener is not removed
-# - The SIL is returning values from the middle of events rather than after their completion
+# 1. When a light is created or deleted, the light's name is incorrectly displayed as the item's internal ident instead. 
+#    Use the Refresh button to clean this up.
+# 2. The Scene Item Listener is not properly removed when LightBank is closed.
 
 #--------------------------------------------------------------------------------------------------------------------
 
@@ -42,6 +43,7 @@ import lightPanel_UI
 # import the Modo listener classes
 import listeners
 
+version = "0.3"
 
 # Get basic services
 sceneServ = lx.service.Scene()
@@ -76,7 +78,7 @@ lightPreSoloStates = {}
 
 # Define the contents of the 'About' screen, as html
 aboutText = '''
-Version 0.1 - <a href="http://www.timcrowson.com" style="text-decoration:none; color: #DBBC86">Tim Crowson</a> - January 2014 <br/><br/><br/>
+Version %s- <a href="http://www.timcrowson.com" style="text-decoration:none; color: #DBBC86">Tim Crowson</a> - March 2014 <br/><br/><br/>
 
 This plugin was created as an exercise for testing PySide in MODO 801 Linux. <br/><br/><br/><br/><br/>
 <span style="color: #f49c1c;"><em>DESCRIPTION</em></span><br/><br/>
@@ -93,10 +95,10 @@ LightBank offers access to limited controls for all lights simultaneously, inclu
 <br/><br/>
 <span style="color: #f49c1c;"><em>KNOWN ISSUES</em></span>
 <ul>
-	<li>The Scene Item Listener is returning values from the middle of events rather than after their completion</li>
-	<li>When a light is created or deleted, the panel will not update propely because of the above issues with the SIL. Use the Refresh button for now.</li>
+	<li>When a light is created or deleted, the light's name is incorrectly displayed as the item's internal ident instead. Use the Refresh button to clean this up.</li>
+	<li>The Scene Item Listener is not properly removed when LightBank is closed. </li>
 </ul>
-'''
+'''%version
 
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -144,13 +146,13 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		self.refreshButton.setIcon(QIcon(self.resourceRoot + 'refresh.png'))
 		self.lightList.setResizeMode(QListView.Adjust)
 
-		# populate the light list 
+		# populate the light list
 		self.update_All()
 		self.update_GIState()
 
 
 	def __del__(self):
-		lx.out('LightBank Container destructor called...')
+		lx.out('LightBank Container class destructor called...')
 
 
 	def setConnections(self):
@@ -332,7 +334,6 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 			panel.specularSpinBox.setValue(affectSpec*100)
 
 
-
 	
 	def update_PanelValuesAll(self):
 		'''
@@ -352,8 +353,7 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		'''
 		Update the 'rowContainer' for each panel in the UI.
 		This is basically a cheap hack to store the current row a panel is on,
-		since deriving the row once a widget is set on a QListWidgetItem seems tricky.
-		Probably feasible by traversing the parents. Will fix it soon...
+		since deriving the row once a widget is set on a QListWidgetItem is tricky.
 		'''
 		for i in range(self.lightList.count()):
 			item = self.lightList.item(i)
@@ -405,15 +405,12 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 	def __init__(self, ident, parent=None):
 		QWidget.__init__(self, parent)
 		self.setupUi(self)
-	
 		self.row = None
 		self.ident = ident
 		self.identContainer.setText(ident)
 		self.compactSizeHint = None
-
 		self.optionsWidget.hide()
 		self.optionsCheckbox.setProperty('disclosure', True)
-
 		self.setConnections()
 
 
@@ -422,6 +419,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Connect signals and slots
 		'''
 		self.lightNameLineEdit.editingFinished.connect(self.set_LightName)
+		self.lightNameLineEdit.returnPressed.connect(self.set_LightName)
 
 		self.intensitySlider.sliderReleased.connect(self.update_intensitySpinBox)
 		self.intensitySpinBox.editingFinished.connect(self.update_intensitySlider)
@@ -436,8 +434,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 		self.specularSlider.sliderReleased.connect(self.update_specularSpinBox)
 		self.specularSpinBox.editingFinished.connect(self.update_specularSlider)
-
-
 
 
 	def update_intensitySpinBox(self):
@@ -563,9 +559,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 				panelWidget = parent.lightList.itemWidget(panelItem)
 				panelWidget.setEnabled(True)
 
-			
-			
-
 
 
 	def toggle_OptionsWidget(self):
@@ -640,13 +633,12 @@ class lightBank(lxifc.CustomView):
 	Defines the Custom Viewport registered by this plugin
 	'''
 	def __init__ (self):
-
 		self.form = None
 		self.item_events = None
 
 
 	def __del__(self):
-		lx.out('LightBank closing - removing Scene Item Listener...')
+		lx.out('LightBank CustomView class destructor called.')
 
 
 	def itemEvent_Handler (self, listener):
@@ -713,7 +705,7 @@ class lightBank(lxifc.CustomView):
 	def customview_Cleanup (self, pane):
 		'''
 		'''
-		lx.out('LightBank closing - removing Scene Item Listener...')
+		lx.out('LightBank CustomView class cleanup called...')
 		self.item_events.listenerService.RemoveListener(self.item_events)
 
 

@@ -295,10 +295,13 @@ border: 1px solid #5C5C5C;
       <bool>false</bool>
      </property>
      <property name="dragEnabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::InternalMove</enum>
+      <enum>QAbstractItemView::NoDragDrop</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
      </property>
     </widget>
    </item>
