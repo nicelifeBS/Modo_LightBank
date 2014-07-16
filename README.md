@@ -17,10 +17,3 @@ ___
 *INSTALLATION:* <br/>
 LightBank is only available on Linux.
 [Download LightBank](http://www.timcrowson.com/downloads/lightbank/LightBank.zip), and place it inside ~/.luxology/Scripts.
-
-
-___
-
-*KNOWN ISSUES:* <br/>
-- When a light is created or deleted, the light's name is incorrectly displayed as the item's internal ident instead. Use the Refresh button to clean this up until a fix is ready. 
-- The Scene Item Listener is not properly removed when LightBank is closed.
