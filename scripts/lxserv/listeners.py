@@ -8,14 +8,6 @@ ITEM_DELETE         = 1
 ITEM_RENAME         = 2
 VALUE_CHANGED       = 3
 
-# Selection Events
-SELEVENT_ADD        = 0
-SELEVENT_REMOVE     = 1
-SELEVENT_CURRENT    = 2
-SELEVENT_TIME       = 3
-SELEVENT_TIMERANGE  = 4
-
-
 #----------------------------------------------------------------------------------------------------------------------
 # SceneItemListener - Helper class
 #----------------------------------------------------------------------------------------------------------------------
@@ -24,7 +16,7 @@ class ItemEvents (lxifc.SceneItemListener):
 	'''
 	def __init__ (self, callback):
 		self.listenerService = lx.service.Listener ()
-		self.listenerService.AddListener (self)
+		#self.listenerService.AddListener (self)
 		self.callback = callback
 		self.event = None
 		self.item = None
@@ -111,47 +103,3 @@ class ItemEvents (lxifc.SceneItemListener):
 		pass
 
 
-
-#-----------------------------------------------------------------------------------------------------------------------
-# SelectionListener - Helper class by Matt Cox
-#----------------------------------------------------------------------------------------------------------------------
-class SelectionEvents (lxifc.SelectionListener):
-	'''
-	The SelectionEvent class is a helper class that is used to track
-	selection and time changes in the current scene. It's initialized
-	by passing it a callback function. When the selection or time changes,
-	the callback function is called, passing it the SelectionEvent object,
-	so it can be queried for it's current state.
-	'''
-    
-	def __init__ (self, callback):
-		self.lsn_svc = lx.service.Listener ()
-		self.lsn_svc.AddListener (self)
-		self.callback = callback
-		self.event = None
-		self.type = None
-		self.subType = None
-        
-	def __del__ (self):
-		self.lsn_svc.RemoveListener (self)
-    
-	def eventHandler (self, event, type, subType):
-		self.event = event
-		self.type = type
-		self.subType = subType
-		self.callback (self)
-    
-	def selevent_Add (self, type, subType):
-		self.eventHandler (SELEVENT_ADD, type, subType)
-    
-	def selevent_Remove (self, type, subType):
-		self.eventHandler (SELEVENT_REMOVE, type, subType)
-        
-	def selevent_Current (self, type):
-		self.eventHandler (SELEVENT_CURRENT, type, None)
-        
-	def selevent_Time (self, time):
-		self.eventHandler (SELEVENT_TIME, None, None)
-        
-	def selevent_TimeRange (self, type):
-		self.eventHandler (SELEVENT_TIMERANGE, type, None)
