@@ -4,16 +4,9 @@
 # LIGHTBANK, Tim Crowson, July 2014
 
 # Created primarily as an exercise for testing PySide in Modo 801 Linux
-
 # Registers a new Custom Viewport which offers access to limited controls
-# for all lights simultaneously, including the following:
-# - radiant intensity
-# - light color
-# - diffuse contribution
-# - specular contribution
-# - on/off
-# - a Solo mode which enables the current light and disables all others.
-#   (Note: other light panels are locked out until the light is unsoloed.)
+# for all lights simultaneously.
+
 
 
 #------------------------------------------------------------------------------
@@ -30,18 +23,16 @@ import PySide
 from PySide.QtGui import *
 from PySide.QtCore import *
 
-__VERSION = "0.4"
+__VERSION = "0.5"
 
 
 #------------------------------------------------------------------------------
 # PATHS
 
-# kit folder
 FILESERVICE = lx.service.File()
 SCRIPTSPATH = FILESERVICE.FileSystemPath(lx.symbol.sSYSTEM_PATH_SCRIPTS)
 KITPATH = os.path.join(SCRIPTSPATH,  'LightBank')
 
-# resource folder
 RESRCPATH = os.path.join(KITPATH, 'resrc')
 
 
@@ -50,7 +41,6 @@ RESRCPATH = os.path.join(KITPATH, 'resrc')
 SCENESERVICE = lx.service.Scene()
 SELSERVICE = lx.service.Selection()
 CMDSERVICE = lx.service.Command()
-PLATSERVICE = lx.service.Platform()
 
 
 #------------------------------------------------------------------------------
@@ -67,6 +57,8 @@ ITEM_DELETE   = 1
 ITEM_RENAME   = 2
 VALUE_CHANGED = 3
 
+
+#------------------------------------------------------------------------------
 # Light Item Types
 LIGHTITEMSDICT = {
 				133: 'LightMaterial',
@@ -83,28 +75,9 @@ LIGHTITEMSDICT = {
 # light state storage
 LIGHTPRESOLOSTATES = {}
 
-# Define the contents of the 'About' screen, as html
-ABOUTTEXT = '''
-__VERSION %s- <a href="http://www.timcrowson.com" style="text-decoration:none; color: #DBBC86">Tim Crowson</a> - July 2014 <br/><br/><br/>
-
-This plugin was created as an exercise for testing PySide in MODO 801 Linux. <br/><br/><br/><br/><br/>
-<span style="color: #f49c1c;"><em>DESCRIPTION</em></span><br/><br/>
-LightBank offers access to limited controls for all lights simultaneously, including the following:
-<ul>
-	<li>Radiant Intensity</li>
-	<li>Material Color</li>
-	<li>Diffuse Contribution percentage</li>
-	<li>Specular Contribution percentage</li>
-	<li>Render on/off</li>
-	<li>Solo mode</li>
-	<li>Global Illumination toggle</li>
-</ul>
-
-'''%__VERSION
-
 
 #------------------------------------------------------------------------------
-# Helper functions
+# Helpers
 #------------------------------------------------------------------------------
 def getItemByName (name):
 	'''
@@ -131,6 +104,15 @@ def getLightMaterial (light):
 	return None
 
 
+def modoCmd (commandString):
+	'''
+	Pass a command to Modo so that it gets logged to the undo stack.
+	This is a utility wrapper to minimize lengthy command strings later.
+	'''
+	CMDSERVICE.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, commandString)
+
+
+
 #------------------------------------------------------------------------------
 class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 	'''
@@ -139,21 +121,17 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 
 	def __init__(self, parent=None):
 		QWidget.__init__(self, parent)
-		self.setupUi(self)
+		self.setupUi(self) # boilerplate
 		self.setConnections()
 
 		# force some initial UI elements
 		self.resourceRoot = RESRCPATH
-		self.refreshButton.setIcon(QIcon(self.resourceRoot + 'refresh.png'))
+		self.refreshButton.setIcon(QIcon( os.path.join(RESRCPATH, 'refresh.png')))
 		self.lightList.setResizeMode(QListView.Adjust)
 
 		# populate the light list
 		self.update_All()
 		self.update_GIState()
-
-
-	def __del__(self):
-		pass
 
 
 	def paintEvent(self, event):
@@ -163,6 +141,7 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 	 	panel titles for new lights will reflect internal ident names instead.
 		'''
 		self.update_PanelTitles()
+		self.update_PanelLightTypes()
 		QWidget.paintEvent(self, event)
 
 
@@ -170,9 +149,8 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		'''
 		Connect signals and slots
 		'''
-		self.refreshButton.released.connect(self.manualRefresh)
+		self.refreshButton.released.connect(self.update_All)
 		self.giCheckBox.stateChanged.connect(self.toggle_GI)
-		self.aboutButton.released.connect(self.showAbout)
 
 
 	def getExistingLightEntities(self):
@@ -218,9 +196,7 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		giState = self.giCheckBox.isChecked()
 		scene = lxu.select.SceneSelection().current()
 		renderItem = scene.AnyItemOfType(SCENESERVICE.ItemTypeLookup(lx.symbol.sITYPE_RENDER))
-		CMDSERVICE.ExecuteArgString(-1,
-								lx.symbol.iCTAG_NULL,
-								"item.channel name:{globEnable} value:%s item:{%s}" % (giState, renderItem.Ident()))
+		modoCmd("item.channel name:{globEnable} value:%s item:{%s}" % (giState, renderItem.Ident()))
 
 
 	def panels_RemoveOld(self):
@@ -346,7 +322,6 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 			panel.specularSlider.setValue(affectSpec*100)
 			panel.specularSpinBox.setValue(affectSpec*100)
 
-
 	
 	def update_PanelValuesAll(self):
 		'''
@@ -377,34 +352,13 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 
 	def update_All(self):
 		'''
-		Called by the constructor
+		Update everything
 		'''
 		self.panels_RemoveOld()
 		self.panels_AddNew()
 		self.update_PanelLightTypes()
 		self.update_PanelValuesAll()
 		self.update_PanelTitles()
-
-
-	def manualRefresh(self):
-		'''
-		Called by the 'Refresh' button
-		'''
-		self.update_GIState()
-		self.update_PanelLightTypes()
-		self.update_PanelValuesAll()
-		self.update_PanelTitles()
-
-
-	def showAbout(self):
-		'''
-		Display info about LightBank in a modal window
-		'''
-		box = QMessageBox()
-		box.setWindowTitle('About LightBank...')
-		box.setContentsMargins(0,20,40,40)
-		box.setText(ABOUTTEXT)
-		box.exec_()
 
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -417,7 +371,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 	def __init__(self, ident, parent=None):
 		QWidget.__init__(self, parent)
-		self.setupUi(self)
+		self.setupUi(self) # boilerplate
 		self.row = None
 		self.ident = ident
 		self.identContainer.setText(ident)
@@ -507,7 +461,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 			value = 'off'
 
 		lightItem = getItemByName(self.lightNameLineEdit.text())
-		CMDSERVICE.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:%s item:{%s}" % (value, lightItem.Ident()))
+		modoCmd("item.channel name:{render} value:%s item:{%s}" %(value, lightItem.Ident()))
 
 
 	def toggle_LightSolo(self):
@@ -538,10 +492,10 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 				# disable all other lights
 				if lightIdent != thisPanelIdent:
-					CMDSERVICE.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:off item:{%s}" % lightIdent)
+					modoCmd("item.channel name:{render} value:off item:{%s}" % lightIdent)
 
 				# enable this light
-				CMDSERVICE.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:off item:{%s}" % thisPanelIdent)
+				modoCmd("item.channel name:{render} value:off item:{%s}" % thisPanelIdent)
 
 			# update UI
 			self.lightEnabledCheckbox.setChecked(True)
@@ -564,14 +518,13 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 				originalState = LIGHTPRESOLOSTATES[lightIdent]
 
 				# set the value
-				CMDSERVICE.ExecuteArgString( -1, lx.symbol.iCTAG_NULL, "item.channel name:{render} value:%s item:{%s}" %(originalState, lightIdent) )
+				modoCmd("item.channel name:{render} value:%s item:{%s}" %(originalState, lightIdent))
 
 			# re-enable other widgets
 			for i in range (parent.lightList.count()):
 				panelItem = parent.lightList.item(i)
 				panelWidget = parent.lightList.itemWidget(panelItem)
 				panelWidget.setEnabled(True)
-
 
 
 	def toggle_OptionsWidget(self):
@@ -597,7 +550,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Rename the light item in the scene
 		'''
 		newName = self.lightNameLineEdit.text()
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.name %s item:{%s}" % ( newName, self.ident))
+		modoCmd("item.name %s item:{%s}" % ( newName, self.ident))
 
 
 	def set_LightIntensity(self):
@@ -605,7 +558,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		Set the intensity of the corresponding light
 		'''
 		radiance = float(self.intensitySpinBox.value())
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{radiance} value:%f item:{%s}" % (radiance, self.ident))
+		modoCmd("item.channel name:{radiance} value:%f item:{%s}" % (radiance, self.ident))
 
 
 	def set_LightColor(self):
@@ -614,8 +567,8 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		lightItem = getItemByName(self.ident)
 		lightMat = getLightMaterial(lightItem)
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "select.color rgb:{item.channel {lightMaterial$lightCol} ? item:{%s}}" % (lightMat.Ident()))
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "layout.createOrClose ColorPicker ColorPicker true @macros.layouts@ColorPicker@ width:610 height:550 persistent:true style:popover opaque:true" )
+		modoCmd("select.color rgb:{item.channel {lightMaterial$lightCol} ? item:{%s}}" % (lightMat.Ident()))
+		modoCmd("layout.createOrClose ColorPicker ColorPicker true @macros.layouts@ColorPicker@ width:610 height:550 persistent:true style:popover opaque:true")
 
 
 	def set_LightDiffuseContribution(self):
@@ -625,7 +578,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		diffuse = float(self.diffuseSpinBox.value())
 		lightItem = getItemByName(self.ident)
 		lightMat = getLightMaterial(lightItem)
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{diffuse} value:%f item:{%s}" % (diffuse/100, lightMat.Ident()))
+		modoCmd("item.channel name:{diffuse} value:%f item:{%s}" % (diffuse/100, lightMat.Ident()))
 
 
 	def set_LightSpecContribution(self):
@@ -635,4 +588,4 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		spec = float(self.specularSpinBox.value())
 		lightItem = getItemByName(self.ident)
 		lightMat = getLightMaterial(lightItem)
-		CMDSERVICE.ExecuteArgString (-1, lx.symbol.iCTAG_NULL, "item.channel name:{specular} value:%f item:{%s}" % (spec/100, lightMat.Ident()))
+		modoCmd("item.channel name:{specular} value:%f item:{%s}" % (spec/100, lightMat.Ident()))

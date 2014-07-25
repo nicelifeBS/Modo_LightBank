@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightList.ui'
 #
-# Created: Sat Mar 29 21:52:27 2014
+# Created: Fri Jul 25 13:05:15 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,84 +28,6 @@ class Ui_Form(object):
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setVerticalSpacing(3)
         self.gridLayout.setObjectName("gridLayout")
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSpacing(8)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtGui.QLabel(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumSize(QtCore.QSize(0, 18))
-        self.label.setMaximumSize(QtCore.QSize(16777215, 16))
-        font = QtGui.QFont()
-        font.setFamily("Geometr415 Md BT")
-        font.setPointSize(12)
-        font.setWeight(50)
-        font.setUnderline(False)
-        font.setBold(False)
-        self.label.setFont(font)
-        self.label.setStyleSheet("QLabel{\n"
-"background-color: none;\n"
-"color: lightgray;\n"
-"}")
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.line = QtGui.QFrame(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
-        self.line.setSizePolicy(sizePolicy)
-        self.line.setMinimumSize(QtCore.QSize(0, 2))
-        self.line.setMaximumSize(QtCore.QSize(16777215, 2))
-        self.line.setStyleSheet("border: none;\n"
-"background-color: rgb(54, 54, 54);")
-        self.line.setFrameShape(QtGui.QFrame.HLine)
-        self.line.setFrameShadow(QtGui.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.horizontalLayout.addWidget(self.line)
-        self.aboutButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.aboutButton.sizePolicy().hasHeightForWidth())
-        self.aboutButton.setSizePolicy(sizePolicy)
-        self.aboutButton.setMinimumSize(QtCore.QSize(16, 16))
-        self.aboutButton.setMaximumSize(QtCore.QSize(16, 16))
-        self.aboutButton.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.aboutButton.setStyleSheet("QPushButton\n"
-"{\n"
-"  icon-size: 12px;\n"
-"  background-color: #606060;\n"
-"  border-width: 1px;\n"
-"  border-color: #353535;\n"
-"  border-style: solid;\n"
-"  border-radius: 6px;\n"
-"  padding: 1px;\n"
-"  padding-left: 1px;\n"
-"  padding-right: 1px;\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  icon-size: 12px;\n"
-"  background-color: #f49c1c;\n"
-"  color: black;\n"
-"  border-width: 1px;\n"
-"  border-color: #353535;\n"
-"  border-style: solid;\n"
-"  border-radius: 6px;\n"
-"  padding: 1px;\n"
-"  padding-left: 1px;\n"
-"  padding-right: 1px;\n"
-"}")
-        self.aboutButton.setObjectName("aboutButton")
-        self.horizontalLayout.addWidget(self.aboutButton)
-        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.giCheckBox = QtGui.QCheckBox(Form)
@@ -115,8 +37,8 @@ class Ui_Form(object):
         self.giCheckBox.setChecked(True)
         self.giCheckBox.setObjectName("giCheckBox")
         self.horizontalLayout_2.addWidget(self.giCheckBox)
-        spacerItem1 = QtGui.QSpacerItem(348, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacerItem = QtGui.QSpacerItem(348, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.refreshButton = QtGui.QPushButton(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -141,7 +63,7 @@ class Ui_Form(object):
         self.refreshButton.setIconSize(QtCore.QSize(16, 16))
         self.refreshButton.setObjectName("refreshButton")
         self.horizontalLayout_2.addWidget(self.refreshButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.lightList = QtGui.QListWidget(Form)
         self.lightList.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lightList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -158,16 +80,13 @@ class Ui_Form(object):
         self.lightList.setAutoScroll(False)
         self.lightList.setDragEnabled(False)
         self.lightList.setDragDropMode(QtGui.QAbstractItemView.NoDragDrop)
-        self.lightList.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.lightList.setObjectName("lightList")
-        self.gridLayout.addWidget(self.lightList, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.lightList, 1, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Form", "LightBank", None, QtGui.QApplication.UnicodeUTF8))
-        self.aboutButton.setText(QtGui.QApplication.translate("Form", "?", None, QtGui.QApplication.UnicodeUTF8))
         self.giCheckBox.setText(QtGui.QApplication.translate("Form", "Global Illumination", None, QtGui.QApplication.UnicodeUTF8))
 
