@@ -4,49 +4,17 @@
 # LIGHTBANK, Tim Crowson, July 2014
 
 
-
-import os
-import sys
-
 import lx
 import lxu
 import lxifc
 
 import PySide
-from PySide.QtGui import *
-from PySide.QtCore import *
 
 import sil
 import lightbank
 
 
-# Get basic services
-SCENESERVICE = lx.service.Scene()
-SELSERVICE = lx.service.Selection()
-CMDSERVICE = lx.service.Command()
-PLATSERVICE = lx.service.Platform()
 
-# Item Events
-ITEM_ADD      = 0
-ITEM_DELETE   = 1
-ITEM_RENAME   = 2
-VALUE_CHANGED = 3
-
-
-# Light Item Types
-LIGHTITEMSDICT = {
-				133: 'LightMaterial',
-				138: 'Directional',
-				139: 'Point',
-				140: 'Spot',
-				141: 'Area',
-				142: 'Cylinder',
-				143: 'Dome',
-				144: 'Portal',
-				145: 'Photometric'
-				}
-
-#----------------------------------------------------------------------------------------------------------------------
 class LightBank_CustomView(lxifc.CustomView):
 	'''
 	Defines the Custom Viewport registered by this plugin
@@ -54,9 +22,21 @@ class LightBank_CustomView(lxifc.CustomView):
 	def __init__ (self):
 		self.form = None
 		self.item_events = None
-
-	def __del__(self):
-		pass
+		self.ITEM_ADD = 0
+		self.ITEM_DELETE = 1
+		self.ITEM_RENAME = 2
+		self.VALUE_CHANGED = 3
+		self.LIGHTITEMSDICT = {
+			133: 'LightMaterial',
+			138: 'Directional',
+			139: 'Point',
+			140: 'Spot',
+			141: 'Area',
+			142: 'Cylinder',
+			143: 'Dome',
+			144: 'Portal',
+			145: 'Photometric'
+			}
 
 	def itemEvent_Handler (self, listener):
 		'''
@@ -70,24 +50,25 @@ class LightBank_CustomView(lxifc.CustomView):
 		item = lx.object.Item(self.item_events.item)
 		itemType = item.Type()
 
-		if itemType in LIGHTITEMSDICT:
+		if itemType in self.LIGHTITEMSDICT:
 
 			if listener:
-				if listener.event == ITEM_ADD:
-					self.form.panels_AddNew()
+				if listener.event == self.ITEM_ADD:
+					self.form.ui_panels_addNew()
 					
-				elif listener.event == ITEM_DELETE:
-					self.form.panels_RemoveOld()
+				elif listener.event == self.ITEM_DELETE:
+					self.form.ui_panels_removeOld()
 
-				elif listener.event == ITEM_RENAME:
-					self.form.manualRefresh()
+				elif listener.event == self.ITEM_RENAME:
+					self.form.ui_update_all()
 
-				elif listener.event == VALUE_CHANGED:
-					self.form.update_PanelValuesAll()
+				elif listener.event == self.VALUE_CHANGED:
+					self.form.ui_update_channelValuesAll()
 
 
 	def customview_Init(self, pane):
 		'''
+		Initialize the viewport, add the LightBank widget, and run a listener.
 		'''
 		# Get the pane
 		if pane == None:
@@ -104,7 +85,7 @@ class LightBank_CustomView(lxifc.CustomView):
 
 		# Check that it suceeds
 		if parentWidget != None:
-			layout = QGridLayout()
+			layout = PySide.QtGui.QGridLayout()
 			layout.setContentsMargins(2,2,2,2)
 			self.form = lightbank.LightBank_Container()
 			layout.addWidget(self.form)
@@ -125,10 +106,31 @@ class LightBank_CustomView(lxifc.CustomView):
 
 	def customview_Cleanup (self, pane):
 		'''
+		Close the viewport and shut down the listener.
 		'''
 		lx.out('LightBank closed -  removing Scene Item Listener...')
 		lx.service.Listener().RemoveListener(self.com_listener)
 
 
+class ShowLightBank ( lxu.command.BasicCommand ):
+	'''
+	Modo Command to display LightBank in a new window.
+	'''
+
+	def __init__(self):
+		lxu.command.BasicCommand.__init__(self)
+
+	def cmd_Interact(self):
+		''' '''
+		pass
+
+	def basic_Execute(self, msg, flags):
+		'''
+		Display LightBank in a floating palette.
+		'''
+		lx.eval("layout.createOrClose viewCookie LightBankLayout width:400 height:600 class:normal title:{LightBank}")
+
+
 # BLESS THIS MESS!
 lx.bless(LightBank_CustomView, "LightBank")
+lx.bless(ShowLightBank, "lightbank.show")

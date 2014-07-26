@@ -655,6 +655,45 @@ padding-left: 10px;
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="identContainer">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>7</pointsize>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+background-color: #606060;
+color: #606060;
+border-radius: 0px;
+padding-right: 10px;
+}</string>
+          </property>
+          <property name="text">
+           <string>.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="rowContainer">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -717,7 +756,7 @@ padding-right: 10px;
            <font>
             <family>MS Shell Dlg 2</family>
             <pointsize>8</pointsize>
-            <italic>false</italic>
+            <italic>true</italic>
            </font>
           </property>
           <property name="styleSheet">

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightPanel.ui'
 #
-# Created: Sat Mar 29 22:26:56 2014
+# Created: Sat Jul 26 16:31:59 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,14 +41,10 @@ class Ui_Form(object):
         self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setVerticalSpacing(2)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.propertiesGroup = QtGui.QGroupBox(Form)
-        self.propertiesGroup.setStyleSheet("QGroupBox {\n"
+        self.groupBox = QtGui.QGroupBox(Form)
+        self.groupBox.setStyleSheet("QGroupBox{\n"
 "background-color: #484848;\n"
 "border: none;\n"
-"}\n"
-"\n"
-"QGroupBox[state=\"solor\"] {\n"
-"border: 1px solid orange;\n"
 "}\n"
 "\n"
 "QSpinBox, QDoubleSpinBox\n"
@@ -102,14 +98,14 @@ class Ui_Form(object):
 "  height: 7px;\n"
 "}\n"
 "")
-        self.propertiesGroup.setTitle("")
-        self.propertiesGroup.setCheckable(False)
-        self.propertiesGroup.setObjectName("propertiesGroup")
-        self.gridLayout_2 = QtGui.QGridLayout(self.propertiesGroup)
+        self.groupBox.setTitle("")
+        self.groupBox.setCheckable(False)
+        self.groupBox.setObjectName("groupBox")
+        self.gridLayout_2 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_2.setContentsMargins(3, 3, 3, 12)
         self.gridLayout_2.setVerticalSpacing(3)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.optionsWidget = QtGui.QWidget(self.propertiesGroup)
+        self.optionsWidget = QtGui.QWidget(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -189,11 +185,11 @@ class Ui_Form(object):
         self.horizontalLayout.setSpacing(5)
         self.horizontalLayout.setContentsMargins(5, -1, 4, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.optionsCheckbox = QtGui.QCheckBox(self.propertiesGroup)
+        self.optionsCheckbox = QtGui.QCheckBox(self.groupBox)
         self.optionsCheckbox.setText("")
         self.optionsCheckbox.setObjectName("optionsCheckbox")
         self.horizontalLayout.addWidget(self.optionsCheckbox)
-        self.lightEnabledCheckbox = QtGui.QCheckBox(self.propertiesGroup)
+        self.lightEnabledCheckbox = QtGui.QCheckBox(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -207,7 +203,7 @@ class Ui_Form(object):
         self.lightEnabledCheckbox.setTristate(False)
         self.lightEnabledCheckbox.setObjectName("lightEnabledCheckbox")
         self.horizontalLayout.addWidget(self.lightEnabledCheckbox)
-        self.lightSoloButton = QtGui.QPushButton(self.propertiesGroup)
+        self.lightSoloButton = QtGui.QPushButton(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -247,7 +243,7 @@ class Ui_Form(object):
         self.lightSoloButton.setChecked(False)
         self.lightSoloButton.setObjectName("lightSoloButton")
         self.horizontalLayout.addWidget(self.lightSoloButton)
-        self.colorPickButton = QtGui.QPushButton(self.propertiesGroup)
+        self.colorPickButton = QtGui.QPushButton(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -292,7 +288,7 @@ class Ui_Form(object):
         self.colorPickButton.setChecked(False)
         self.colorPickButton.setObjectName("colorPickButton")
         self.horizontalLayout.addWidget(self.colorPickButton)
-        self.intensityLabel = QtGui.QLabel(self.propertiesGroup)
+        self.intensityLabel = QtGui.QLabel(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -304,7 +300,7 @@ class Ui_Form(object):
         self.intensityLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.intensityLabel.setObjectName("intensityLabel")
         self.horizontalLayout.addWidget(self.intensityLabel)
-        self.intensitySlider = QtGui.QSlider(self.propertiesGroup)
+        self.intensitySlider = QtGui.QSlider(self.groupBox)
         self.intensitySlider.setFocusPolicy(QtCore.Qt.NoFocus)
         self.intensitySlider.setStyleSheet("background: none;")
         self.intensitySlider.setMaximum(100)
@@ -316,7 +312,7 @@ class Ui_Form(object):
         self.intensitySlider.setTickInterval(0)
         self.intensitySlider.setObjectName("intensitySlider")
         self.horizontalLayout.addWidget(self.intensitySlider)
-        self.intensitySpinBox = QtGui.QDoubleSpinBox(self.propertiesGroup)
+        self.intensitySpinBox = QtGui.QDoubleSpinBox(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -331,7 +327,7 @@ class Ui_Form(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.lightNameLineEdit = QtGui.QLineEdit(self.propertiesGroup)
+        self.lightNameLineEdit = QtGui.QLineEdit(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -354,7 +350,7 @@ class Ui_Form(object):
         self.lightNameLineEdit.setReadOnly(False)
         self.lightNameLineEdit.setObjectName("lightNameLineEdit")
         self.horizontalLayout_2.addWidget(self.lightNameLineEdit)
-        self.identContainer = QtGui.QLabel(self.propertiesGroup)
+        self.identContainer = QtGui.QLabel(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -374,7 +370,7 @@ class Ui_Form(object):
 "}")
         self.identContainer.setObjectName("identContainer")
         self.horizontalLayout_2.addWidget(self.identContainer)
-        self.rowContainer = QtGui.QLabel(self.propertiesGroup)
+        self.rowContainer = QtGui.QLabel(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -394,7 +390,7 @@ class Ui_Form(object):
 "}")
         self.rowContainer.setObjectName("rowContainer")
         self.horizontalLayout_2.addWidget(self.rowContainer)
-        self.lightTypeLabel = QtGui.QLabel(self.propertiesGroup)
+        self.lightTypeLabel = QtGui.QLabel(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -419,7 +415,7 @@ class Ui_Form(object):
         self.lightTypeLabel.setObjectName("lightTypeLabel")
         self.horizontalLayout_2.addWidget(self.lightTypeLabel)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
-        self.gridLayout_3.addWidget(self.propertiesGroup, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

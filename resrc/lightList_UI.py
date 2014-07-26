@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightList.ui'
 #
-# Created: Fri Jul 25 13:05:15 2014
+# Created: Sat Jul 26 16:18:50 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,30 +39,6 @@ class Ui_Form(object):
         self.horizontalLayout_2.addWidget(self.giCheckBox)
         spacerItem = QtGui.QSpacerItem(348, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.refreshButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.refreshButton.sizePolicy().hasHeightForWidth())
-        self.refreshButton.setSizePolicy(sizePolicy)
-        self.refreshButton.setMinimumSize(QtCore.QSize(20, 20))
-        self.refreshButton.setMaximumSize(QtCore.QSize(20, 20))
-        self.refreshButton.setStyleSheet("QPushButton{\n"
-"background: none;\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"border: 1px solid #5C5C5C;\n"
-"\n"
-"}")
-        self.refreshButton.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons/refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.refreshButton.setIcon(icon)
-        self.refreshButton.setIconSize(QtCore.QSize(16, 16))
-        self.refreshButton.setObjectName("refreshButton")
-        self.horizontalLayout_2.addWidget(self.refreshButton)
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.lightList = QtGui.QListWidget(Form)
         self.lightList.setFocusPolicy(QtCore.Qt.NoFocus)
