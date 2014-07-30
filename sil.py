@@ -1,6 +1,11 @@
+# Scene Item Listener 
+# Original class my Matt Cox
+#
+# We'll use this helper class to set up callbacks specific to item interaction.
+# LightBank will add the listener when it initializes, and will remove it when it closes.
+
 import lx
 import lxifc
-
 
 # Item Events
 ITEM_ADD            = 0
