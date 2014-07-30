@@ -1,5 +1,3 @@
-#layout.createOrClose viewCookie LightBankLayout width:400 height:600 class:normal title:{LightBank}
-
 
 #------------------------------------------------------------------------------
 # INFO
