@@ -35,7 +35,6 @@ __VERSION = "0.5"
 FILESERVICE = lx.service.File()
 SCRIPTSPATH = FILESERVICE.FileSystemPath(lx.symbol.sSYSTEM_PATH_SCRIPTS)
 KITPATH = os.path.join(SCRIPTSPATH,  'LightBank')
-
 RESRCPATH = os.path.join(KITPATH, 'resrc')
 
 
@@ -420,7 +419,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		self.diffuseSpinBox.setValue(self.diffuseSlider.value())
 		self.scene_set_lightDiffContrib()
 
-	def ui_update_diffuseSpinBox(self):
+	def ui_update_speculaSlider(self):
 		'''
 		Update the diffuse slider according to the diffuse spin box
 		'''

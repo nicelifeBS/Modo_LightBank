@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightPanel.ui'
 #
-# Created: Sat Jul 26 16:31:59 2014
+# Created: Wed Jul 30 11:05:16 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -401,7 +401,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setFamily("MS Shell Dlg 2")
         font.setPointSize(8)
-        font.setItalic(False)
+        font.setItalic(True)
         self.lightTypeLabel.setFont(font)
         self.lightTypeLabel.setStyleSheet("QLabel{\n"
 "background-color: #606060;\n"
