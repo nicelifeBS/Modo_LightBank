@@ -4,7 +4,7 @@ LightBank is an experimental kit for configuring multiple lights easily, gatheri
 * to implement a Qt-based Custom Viewport
 * to allow a two-way flow when adjusting channel values (changes in the scene get reflected in the custom viewport, and vice-versa) through a Scene Item Listener
 * to offer some degree of practical application
-* to be distributed as a self-contained kit
+* to be deployed as a self-contained kit
 
 
 [![](http://www.timcrowson.com/wp-content/uploads/2014/07/lightbank_001-1024x638.jpg)](http://www.timcrowson.com/wp-content/uploads/2014/07/lightbank_001.jpg)
