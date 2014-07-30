@@ -44,7 +44,11 @@ CMDSERVICE = lx.service.Command()
 
 
 #------------------------------------------------------------------------------
-# Import the UIs
+# Import the UIs.
+# We'll use two custom widgets, created in QtDesigner.
+# 'lightList_UI' is the overall 'container' widget.
+# 'lightPanel_UI' is the widget which will house each light's properties.
+
 sys.path.append(RESRCPATH)
 import lightList_UI
 import lightPanel_UI
