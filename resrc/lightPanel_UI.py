@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'lightPanel.ui'
 #
-# Created: Wed Jul 30 11:05:16 2014
+# Created: Wed Jul 30 11:29:45 2014
 #      by: pyside-uic 0.2.13 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -84,20 +84,7 @@ class Ui_Form(object):
 "  left: -9px;\n"
 "  border-width: 0px;\n"
 "  border-left: 1px solid #6c7176;\n"
-"}\n"
-"\n"
-"QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {\n"
-"  image: url(SpinBoxRightArrow.png) 1;\n"
-"  width: 6px;\n"
-"  height: 9px;\n"
-"}\n"
-"\n"
-"QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {\n"
-"  image: url(SpinBoxLeftArrow.png) 1;\n"
-"  width: 4px;\n"
-"  height: 7px;\n"
-"}\n"
-"")
+"}")
         self.groupBox.setTitle("")
         self.groupBox.setCheckable(False)
         self.groupBox.setObjectName("groupBox")
@@ -166,6 +153,7 @@ class Ui_Form(object):
         self.specularSpinBox.setSizePolicy(sizePolicy)
         self.specularSpinBox.setMinimumSize(QtCore.QSize(80, 0))
         self.specularSpinBox.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.specularSpinBox.setKeyboardTracking(False)
         self.specularSpinBox.setMaximum(1000.0)
         self.specularSpinBox.setObjectName("specularSpinBox")
         self.gridLayout.addWidget(self.specularSpinBox, 1, 2, 1, 1)
@@ -177,6 +165,7 @@ class Ui_Form(object):
         self.diffuseSpinBox.setSizePolicy(sizePolicy)
         self.diffuseSpinBox.setMinimumSize(QtCore.QSize(80, 0))
         self.diffuseSpinBox.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.diffuseSpinBox.setKeyboardTracking(False)
         self.diffuseSpinBox.setMaximum(1000.0)
         self.diffuseSpinBox.setObjectName("diffuseSpinBox")
         self.gridLayout.addWidget(self.diffuseSpinBox, 0, 2, 1, 1)
@@ -320,6 +309,7 @@ class Ui_Form(object):
         self.intensitySpinBox.setSizePolicy(sizePolicy)
         self.intensitySpinBox.setMinimumSize(QtCore.QSize(80, 0))
         self.intensitySpinBox.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.intensitySpinBox.setKeyboardTracking(False)
         self.intensitySpinBox.setMaximum(100000.0)
         self.intensitySpinBox.setObjectName("intensitySpinBox")
         self.horizontalLayout.addWidget(self.intensitySpinBox)

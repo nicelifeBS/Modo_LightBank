@@ -92,20 +92,7 @@ QSpinBox::down-button, QDoubleSpinBox::down-button {
   left: -9px;
   border-width: 0px;
   border-left: 1px solid #6c7176;
-}
-
-QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-  image: url(SpinBoxRightArrow.png) 1;
-  width: 6px;
-  height: 9px;
-}
-
-QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-  image: url(SpinBoxLeftArrow.png) 1;
-  width: 4px;
-  height: 7px;
-}
-</string>
+}</string>
      </property>
      <property name="title">
       <string/>
@@ -279,6 +266,9 @@ QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
              <height>16777215</height>
             </size>
            </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
            <property name="suffix">
             <string>%</string>
            </property>
@@ -306,6 +296,9 @@ QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
            </property>
            <property name="suffix">
             <string>%</string>
@@ -595,6 +588,9 @@ QPushButton:checked
             <width>80</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="keyboardTracking">
+           <bool>false</bool>
           </property>
           <property name="maximum">
            <double>100000.000000000000000</double>

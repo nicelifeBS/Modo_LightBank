@@ -372,7 +372,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		self.diffuseSpinBox.editingFinished.connect(self.ui_update_diffuseSlider)
 
 		self.specularSlider.sliderReleased.connect(self.ui_update_specularSpinBox)
-		self.specularSpinBox.editingFinished.connect(self.ui_update_diffuseSpinBox)
+		self.specularSpinBox.editingFinished.connect(self.ui_update_specularSlider)
 
 	def ui_toggle_optionsWidget(self):
 		'''
@@ -419,7 +419,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		self.diffuseSpinBox.setValue(self.diffuseSlider.value())
 		self.scene_set_lightDiffContrib()
 
-	def ui_update_speculaSlider(self):
+	def ui_update_specularSlider(self):
 		'''
 		Update the diffuse slider according to the diffuse spin box
 		'''
