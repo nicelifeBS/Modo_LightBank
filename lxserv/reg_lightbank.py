@@ -50,6 +50,10 @@ class LightBank_CustomView(lxifc.CustomView):
 		if itemType in self.LIGHTITEMSDICT:
 
 			if listener:
+				
+				# Ideally the following would trigger more specific actions,
+				# but for our purposes broad actions will suffice.
+				
 				if listener.event == self.ITEM_ADD:
 					self.form.ui_panels_addNew()
 					
@@ -65,7 +69,7 @@ class LightBank_CustomView(lxifc.CustomView):
 
 	def customview_Init(self, pane):
 		'''
-		Initialize the viewport, add the LightBank widget, and run a listener.
+		Initialize the viewport, add the LightBank widget, and add a listener.
 		'''
 		# Get the pane
 		if pane == None:
