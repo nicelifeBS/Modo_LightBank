@@ -1,5 +1,5 @@
 # Scene Item Listener 
-# Original class my Matt Cox
+# Original class by Matt Cox
 #
 # We'll use this helper class to set up callbacks specific to item interaction.
 # LightBank will add the listener when it initializes, and will remove it when it closes.
