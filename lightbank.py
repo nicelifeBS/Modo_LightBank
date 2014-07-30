@@ -45,7 +45,10 @@ CMDSERVICE = lx.service.Command()
 
 #------------------------------------------------------------------------------
 # Import the UIs.
-# We'll use two custom widgets, created in QtDesigner.
+# We'll use two custom widgets, created in QtDesigner. Because PySide for Modo
+# does not yet contain the pysideuic module nor the QtUiTools class,
+# we must convert each .ui file to a Python module, using pyside-uic
+# and pass those to our classes below.
 # 'lightList_UI' is the overall 'container' widget.
 # 'lightPanel_UI' is the widget which will house each light's properties.
 
