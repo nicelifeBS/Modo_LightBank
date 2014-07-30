@@ -362,9 +362,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		Connect signals and slots
 		'''
-		self.lightNameLineEdit.editingFinished.connect(self.scene_set_lightName)
-		self.lightNameLineEdit.returnPressed.connect(self.scene_set_lightName)
-
 		self.intensitySlider.sliderReleased.connect(self.ui_update_intensitySpinBox)
 		self.intensitySpinBox.editingFinished.connect(self.ui_update_intensitySlider)
 
@@ -511,13 +508,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 		lightItem = getItemByName(self.lightNameLineEdit.text())
 		modoCmd("item.channel name:{render} value:%s item:{%s}" %(value, lightItem.Ident()))
-
-	def scene_set_lightName(self):
-		'''
-		Rename the light item in the scene
-		'''
-		newName = self.lightNameLineEdit.text()
-		modoCmd("item.name %s item:{%s}" % ( newName, self.ident))
 
 	def scene_set_lightIntensity(self):
 		'''
