@@ -5,8 +5,6 @@
 # LIGHTBANK, Tim Crowson, July 2014
 
 # Created primarily as an exercise for testing PySide in Modo 801 Linux
-# Registers a new Custom Viewport which offers access to limited controls
-# for all lights simultaneously.
 
 
 
