@@ -1,5 +1,5 @@
 # LIGHTBANK, Tim Crowson, July 2014
-# Created primarily as an exercise for testing PySide in Modo 801 Linux
+# Created as an exercise for testing PySide in Modo 801 Linux
 
 
 
