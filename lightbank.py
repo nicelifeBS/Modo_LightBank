@@ -18,7 +18,6 @@ __VERSION = "0.5"
 
 #------------------------------------------------------------------------------
 # PATHS
-
 FILESERVICE = lx.service.File()
 SCRIPTSPATH = FILESERVICE.FileSystemPath(lx.symbol.sSYSTEM_PATH_SCRIPTS)
 KITPATH = os.path.join(SCRIPTSPATH,  'LightBank')
