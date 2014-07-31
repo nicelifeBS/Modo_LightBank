@@ -93,7 +93,7 @@ def getLightMaterial (light):
 def modoCmd (commandString):
 	'''
 	Pass a command to Modo so that it gets logged to the undo stack.
-	This is a utility wrapper to minimize lengthy command strings later.
+	This is a utility wrapper to minimize lengthy command later.
 	'''
 	CMDSERVICE.ExecuteArgString(-1, lx.symbol.iCTAG_NULL, commandString)
 
