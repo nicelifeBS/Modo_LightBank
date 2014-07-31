@@ -2,10 +2,6 @@
 # Created as an exercise for testing PySide in Modo 801 Linux
 
 
-
-#------------------------------------------------------------------------------
-# IMPORTS
-
 import os
 import sys
 
