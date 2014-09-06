@@ -129,7 +129,7 @@ class ShowLightBank ( lxu.command.BasicCommand ):
 		'''
 		Display LightBank in a floating palette.
 		'''
-		lx.eval("layout.createOrClose viewCookie LightBankLayout width:400 height:600 class:normal title:{LightBank}")
+		lx.eval("layout.createOrClose lightBankCookie LightBankLayout width:400 height:600 class:normal title:{LightBank}")
 
 
 # BLESS THIS MESS!
