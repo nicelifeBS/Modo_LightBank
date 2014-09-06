@@ -231,19 +231,16 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		Update the light type description in the title bar
 		'''
 		lightsInScene, existingPanels = self.get_existingLightEntities()
-
 		for panel in existingPanels:
-			panelIdent = panel.ident
 			for light in lightsInScene:
-				if panelIdent == light.Ident():
+				if panel.ident == light.Ident():
 					panel.lightTypeLabel.setText( LIGHTITEMSDICT[light.Type()] )
 
 	def ui_update_channelValues(self, panel, light):
 		'''
 		Update the values on the light panel according to channel values in the scene.
-		Takes a QObject for the panel, and a Modo Python object for the light
+		Takes a QObject for the panel, and a Modo Python object for the light.
 		'''
-
 		# create a channelRead object
 		scene = lxu.select.SceneSelection ().current ()
 		channelRead = scene.Channels (lx.symbol.s_ACTIONLAYER_EDIT, SELSERVICE.GetTime ())
@@ -253,7 +250,7 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		panel.intensitySlider.setValue(radiance*10)
 		panel.intensitySpinBox.setValue(radiance)
 
-		# Get the render state of the light item (on/off/default(Yes))
+		# Get the render state of the light item (on|off|default(Yes))
 		renderState = channelRead.Value(light, 'render')
 		if renderState  == 'off':
 			panel.lightEnabledCheckbox.setChecked(False)
@@ -262,7 +259,6 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 
 		# Get the Color of the light's material
 		lightMat = getLightMaterial(light)
-		
 		if lightMat:
 			colorRed = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.R'))
 			colorGreen = channelRead.Double (lightMat, lightMat.ChannelLookup (lx.symbol.sICHAN_LIGHTMATERIAL_LIGHTCOL + '.G'))
@@ -286,7 +282,6 @@ class LightBank_Container( QWidget, lightList_UI.Ui_Form ):
 		'''
 		# Get the existing light entities
 		lightsInScene, existingPanels = self.get_existingLightEntities()
-
 		for panel in existingPanels:
 			panelIdent = panel.ident
 			for light in lightsInScene:
@@ -346,19 +341,20 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 	def setConnections(self):
 		'''
-		Connect signals and slots
+		Connect signals and slots.
+		Example:
+			self.lightSoloButton.released.connect(self.global_toggleSoloMode)
+		means:   
+			when the 'lightSoloButton' is released, run the 'global_toggleSoloMode' function.
 		'''
 		self.intensitySlider.sliderReleased.connect(self.ui_update_intensitySpinBox)
 		self.intensitySpinBox.editingFinished.connect(self.ui_update_intensitySlider)
-
 		self.lightEnabledCheckbox.stateChanged.connect(self.scene_toggle_lightEnabled)
-		self.lightSoloButton.clicked.connect(self.global_toggleSoloMode)
+		self.lightSoloButton.released.connect(self.global_toggleSoloMode)
 		self.colorPickButton.released.connect(self.scene_set_lightColor)
 		self.optionsCheckbox.stateChanged.connect(self.ui_toggle_optionsWidget)
-
 		self.diffuseSlider.sliderReleased.connect(self.ui_update_diffuseSpinBox)
 		self.diffuseSpinBox.editingFinished.connect(self.ui_update_diffuseSlider)
-
 		self.specularSlider.sliderReleased.connect(self.ui_update_specularSpinBox)
 		self.specularSpinBox.editingFinished.connect(self.ui_update_specularSlider)
 
@@ -369,9 +365,11 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		# there's got to be a less silly way to get the main widget...
 		parent = self.parentWidget().parentWidget().parentWidget()
 
+		# get the panel object
 		row = int(self.rowContainer.text())
 		panelItem = parent.lightList.item(row)
 
+		# expand or collapse the options section, and resize accordingly
 		if self.optionsCheckbox.isChecked():
 			self.optionsWidget.show()
 			panelItem.setSizeHint(self.sizeHint())
@@ -381,7 +379,7 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 
 	def ui_update_intensitySpinBox(self):
 		'''
-		Update the intensity spin box according to the intensityslider
+		Update the intensity spin box according to the intensity slider
 		'''
 		self.intensitySpinBox.setValue(float(self.intensitySlider.value())/10)
 		self.scene_set_lightIntensity()
@@ -425,13 +423,11 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 		'''
 		Toggle the solo state of the target light item
 		'''
-
-		scene = lxu.select.SceneSelection ().current ()
+		scene = lxu.select.SceneSelection().current()
 		light_type = SCENESERVICE.ItemTypeLookup (lx.symbol.sITYPE_LIGHT)
 		channelRead = scene.Channels(lx.symbol.s_ACTIONLAYER_EDIT, SELSERVICE.GetTime())
 		parent = self.parentWidget().parentWidget().parentWidget()
 		thisPanelIdent = self.ident
-
 
 		# solo this light
 		if self.lightSoloButton.isChecked():
@@ -464,7 +460,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 					panelWidget.lightSoloButton.setChecked(False)
 					panelWidget.setEnabled(False)
 
-
 		# restore pre-solo state
 		else:
 			for i in range(scene.ItemCount(light_type)):
@@ -491,7 +486,6 @@ class LightBank_Panel( QWidget, lightPanel_UI.Ui_Form):
 			value = 'default'
 		else:
 			value = 'off'
-
 		lightItem = getItemByName(self.lightNameLineEdit.text())
 		modoCmd("item.channel name:{render} value:%s item:{%s}" %(value, lightItem.Ident()))
 

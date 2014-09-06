@@ -87,7 +87,7 @@ class LightBank_CustomView(lxifc.CustomView):
 		# Check that it suceeds
 		if parentWidget != None:
 			layout = PySide.QtGui.QGridLayout()
-			layout.setContentsMargins(2,2,2,2)
+			layout.setContentsMargins( 0,0,0,0 )
 			self.form = lightbank.LightBank_Container()
 			layout.addWidget(self.form)
 			parentWidget.setLayout(layout)
