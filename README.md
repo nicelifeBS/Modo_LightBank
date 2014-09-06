@@ -27,7 +27,7 @@ Since the primary goals do not describe a fully production-ready toolset, the fe
 LightBank is only available for Modo 801 on Linux, since its Windows and Mac versions do not yet offer PySide-based Custom Viewports.
 
 1. Download [LightBank](http://www.timcrowson.com/downloads/lightbank/tc_LightBank.zip)
-2. Place the kit in your Modo "User's Scripts" directory usually `/home/username/.luxology/Scripts`
+2. Place the kit in your Modo User Scripts or Configs directory
 3. Restart Modo
 
 ***
